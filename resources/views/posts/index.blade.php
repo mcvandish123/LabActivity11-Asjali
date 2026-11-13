@@ -11,8 +11,19 @@
             @endforeach
         </select>
 
+        @if (request()->filled('tag'))
+            <input type="hidden" name="tag" value="{{ request('tag') }}">
+        @endif
+
         <button class="bg-blue-700 text-white rounded px-4 py-2">Filter</button>
     </form>
+
+    @if (request()->filled('tag'))
+        <p class="mb-4 text-sm text-gray-600">
+            Filtering by tag <strong>{{ request('tag') }}</strong>
+            · <a href="{{ route('posts.index', request()->except('tag', 'page')) }}" class="text-blue-700 hover:underline">clear</a>
+        </p>
+    @endif
 
     <div class="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
         @forelse ($posts as $post)
@@ -22,6 +33,9 @@
                         <span class="text-xs bg-yellow-200 text-yellow-900 rounded px-2 py-1">Pinned</span>
                     @endif
                     <span class="text-xs bg-blue-100 text-blue-800 rounded px-2 py-1">{{ $post->category }}</span>
+                    @foreach ($post->tags as $tag)
+                        <a href="{{ route('posts.index', ['tag' => $tag->name]) }}" class="text-xs bg-green-100 text-green-800 rounded px-2 py-1">{{ $tag->name }}</a>
+                    @endforeach
                 </div>
 
                 <h2 class="font-semibold mb-2">
@@ -29,7 +43,10 @@
                 </h2>
 
                 <p class="text-sm text-gray-500">{{ $post->published_at->format('M j, Y') }}</p>
-                <p class="text-sm text-gray-500">Author #{{ $post->author_id }} · {{ $post->views }} views</p>
+                <p class="text-sm text-gray-500">
+                    <a href="{{ route('authors.show', $post->author) }}" class="text-blue-700 hover:underline">{{ $post->author->name }}</a>
+                    · {{ $post->comments_count }} comments · {{ $post->views }} views
+                </p>
             </div>
         @empty
             <p class="sm:col-span-2 md:col-span-3">No posts match your search.</p>
