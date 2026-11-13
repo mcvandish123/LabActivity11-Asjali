@@ -19,6 +19,15 @@ class AuthorController extends Controller
 
         $commentsReceived = $author->comments()->count();
 
-        return view('authors.show', compact('author', 'posts', 'commentsReceived'));
+        $recentComments = $author->comments()
+            ->with(['post', 'user'])
+            ->latest('comments.created_at')
+            ->latest('comments.id')
+            ->limit(5)
+            ->get();
+
+        $author->load('user');
+
+        return view('authors.show', compact('author', 'posts', 'commentsReceived', 'recentComments'));
     }
 }

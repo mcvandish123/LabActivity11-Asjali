@@ -21,6 +21,9 @@
     @if (request()->filled('tag'))
         <p class="mb-4 text-sm text-gray-600">
             Filtering by tag <strong>{{ request('tag') }}</strong>
+            @if ($activeTag)
+                ({{ $activeTag->posts_count }} published {{ Str::plural('post', $activeTag->posts_count) }})
+            @endif
             · <a href="{{ route('posts.index', request()->except('tag', 'page')) }}" class="text-blue-700 hover:underline">clear</a>
         </p>
     @endif

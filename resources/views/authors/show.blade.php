@@ -9,7 +9,25 @@
         <h1 class="text-2xl font-bold">{{ $author->name }}</h1>
         <p class="text-gray-600">{{ $author->position }}</p>
         <p class="mt-2 text-sm text-gray-500">{{ $commentsReceived }} {{ Str::plural('comment', $commentsReceived) }} received</p>
+        @if ($author->user)
+            <p class="mt-1 text-sm text-gray-500">Login account: {{ $author->user->name }}</p>
+        @endif
     </div>
+
+    @if ($recentComments->isNotEmpty())
+        <h2 class="text-lg font-semibold mb-3">Latest comments received</h2>
+        <div class="bg-white rounded shadow p-4 mb-6 space-y-3">
+            @foreach ($recentComments as $comment)
+                <div class="text-sm">
+                    <p>{{ $comment->body }}</p>
+                    <p class="text-gray-500">
+                        {{ $comment->user->name }} on
+                        <a href="{{ route('posts.show', $comment->post->id) }}" class="text-blue-700 hover:underline">{{ $comment->post->title }}</a>
+                    </p>
+                </div>
+            @endforeach
+        </div>
+    @endif
 
     <h2 class="text-lg font-semibold mb-3">Published posts</h2>
 

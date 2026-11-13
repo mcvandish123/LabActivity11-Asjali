@@ -20,7 +20,7 @@
                     @endif
                     <form method="POST" action="{{ route('logout') }}" class="flex items-center gap-3">
                         @csrf
-                        <span>{{ auth()->user()->name }}</span>
+                        <span>{{ auth()->user()->name }} ({{ auth()->user()->comments()->count() }} comments)</span>
                         <button type="submit" class="underline">Log out</button>
                     </form>
                 @endauth

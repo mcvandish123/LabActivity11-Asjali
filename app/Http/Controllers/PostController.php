@@ -38,7 +38,13 @@ class PostController extends Controller
 
         $categories = Post::query()->distinct()->orderBy('category')->pluck('category');
 
-        return view('posts.index', compact('posts', 'categories'));
+        $activeTag = $request->filled('tag')
+            ? Tag::where('name', $request->input('tag'))
+                ->withCount(['posts' => fn ($query) => $query->where('is_published', true)])
+                ->first()
+            : null;
+
+        return view('posts.index', compact('posts', 'categories', 'activeTag'));
     }
 
     public function create(): View
