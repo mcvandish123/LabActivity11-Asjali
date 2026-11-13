@@ -14,6 +14,9 @@ class Post extends Model
     /** @use HasFactory<PostFactory> */
     use HasFactory;
 
+    /** @var list<string> */
+    public const CATEGORIES = ['Announcement', 'Health', 'Peace & Order', 'Ayuda', 'Livelihood'];
+
     protected $fillable = [
         'author_id',
         'title',

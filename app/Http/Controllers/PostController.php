@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePostRequest;
 use App\Models\Post;
+use App\Models\Tag;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -36,6 +39,36 @@ class PostController extends Controller
         $categories = Post::query()->distinct()->orderBy('category')->pluck('category');
 
         return view('posts.index', compact('posts', 'categories'));
+    }
+
+    public function create(): View
+    {
+        abort_unless(auth()->user()->author()->exists(), 403);
+
+        return view('posts.create', [
+            'categories' => Post::CATEGORIES,
+            'tags' => Tag::orderBy('name')->get(),
+        ]);
+    }
+
+    public function store(StorePostRequest $request): RedirectResponse
+    {
+        $data = $request->validated();
+        $tagIds = $data['tags'];
+        unset($data['tags']);
+
+        if ($data['is_published']) {
+            $data['published_at'] = now();
+        }
+
+        $post = $request->user()->author()->firstOrFail()->posts()->create($data);
+        $post->tags()->sync($tagIds);
+
+        if ($post->is_published) {
+            return redirect()->route('posts.show', $post->id)->with('status', 'Post created.');
+        }
+
+        return redirect()->route('posts.index')->with('status', 'Draft saved.');
     }
 
     public function show(int|string $id): View

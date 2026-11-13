@@ -33,6 +33,24 @@
     <section class="bg-white rounded shadow p-4 sm:p-6 mt-4">
         <h2 class="text-lg font-semibold mb-3">Comments ({{ $post->comments->count() }})</h2>
 
+        @auth
+            @include('partials.error-summary')
+
+            <form method="POST" action="{{ route('comments.store', $post) }}" class="mb-4">
+                @csrf
+                <label for="body" class="block text-sm font-medium mb-1">Add a comment</label>
+                <textarea id="body" name="body" rows="3"
+                    class="w-full rounded border border-gray-300 px-3 py-2 @error('body') border-red-500 @enderror">{{ old('body') }}</textarea>
+                @error('body')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+                <button type="submit" class="mt-2 rounded bg-blue-700 px-4 py-2 text-white font-semibold hover:bg-blue-800">Post comment</button>
+            </form>
+        @endauth
+        @guest
+            <p class="mb-4 text-sm text-gray-600"><a href="{{ route('login') }}" class="text-blue-700 underline">Sign in to comment</a></p>
+        @endguest
+
         @forelse ($post->comments as $comment)
             <div class="border-t border-gray-200 py-3">
                 <p class="text-sm font-semibold">{{ $comment->user->name }}

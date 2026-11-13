@@ -15,6 +15,9 @@
             </div>
             <nav class="text-sm">
                 @auth
+                    @if (auth()->user()->author()->exists())
+                        <a href="{{ route('posts.create') }}" class="mr-4 underline">New post</a>
+                    @endif
                     <form method="POST" action="{{ route('logout') }}" class="flex items-center gap-3">
                         @csrf
                         <span>{{ auth()->user()->name }}</span>
@@ -29,6 +32,10 @@
     </header>
 
     <main class="max-w-5xl mx-auto px-4 py-6">
+        @if (session('status'))
+            <div class="mb-4 rounded border border-green-300 bg-green-50 p-3 text-sm text-green-800">{{ session('status') }}</div>
+        @endif
+
         @yield('content')
     </main>
 </body>
